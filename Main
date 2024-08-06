@@ -1,0 +1,59 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner s = new Scanner(System.in);
+
+        int arrMin = 8;
+        int arrMax = 16;
+        int numeroEquipes = 0;
+        boolean numeroValido = false;
+
+        System.out.println("------ SISTEMA DE BALLIT CHAMPIONSHIP -----");
+
+        while (!numeroValido) {
+            System.out.println("\nQuantas equipes serão registradas?");
+            numeroEquipes = s.nextInt();
+
+            if (numeroEquipes >= arrMin && numeroEquipes <= arrMax && numeroEquipes % 2 == 0) {
+                numeroValido = true;
+            } else {
+                System.out.println("\nNúmero de equipes inválido. Tente novamente.");
+            }
+        }
+
+        System.out.println("\nIniciando cadastro...");
+
+        Times[] time = new Times[numeroEquipes];
+
+        for (int i = 0; i < numeroEquipes; ++i) {
+            s.nextLine();
+
+            System.out.println("\n1) Qual o nome da equipe?");
+            String nomeEquipe = s.nextLine();
+
+            System.out.println("\n2) Qual o grito de guerra da equipe?");
+            String gritoEquipe = s.nextLine();
+
+            System.out.println("\n3) Qual foi o ano de fundação da equipe?");
+            int fundacaoEquipe = s.nextInt();
+
+            time[i] = new Times(nomeEquipe, gritoEquipe, fundacaoEquipe);
+            System.out.println("\nEquipe número " + (i + 1) + " registrada com sucesso =) " + time[i]);
+        }
+
+        List<String> nomesDasEquipes = new ArrayList<>();
+        for (Times t : time) {
+            nomesDasEquipes.add(t.getNome());
+        }
+
+        Campeonato c = new Campeonato(nomesDasEquipes);
+
+        c.sortearDuplas();
+
+        s.close();
+    }
+}
