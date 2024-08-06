@@ -1,0 +1,78 @@
+public class Times {
+
+    private String nome;
+    private String gritoDeGuerra;
+    private int anoDeFundacao;
+    private int pontos;
+    private int advContador;
+
+    public Times(String nome, String gritoDeGuerra, int anoDeFundacao) {
+        this.nome = nome;
+        this.gritoDeGuerra = gritoDeGuerra;
+        this.anoDeFundacao = anoDeFundacao;
+        this.pontos = 50;
+        this.advContador = 0;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getGritoDeGuerra() {
+        return gritoDeGuerra;
+    }
+
+    public int getAnoDeFundacao() {
+        return anoDeFundacao;
+    }
+
+    public int getPontos() {
+        return pontos;
+    }
+
+    public int getAdvContador() {
+        return advContador;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setGritoDeGuerra(String gritoDeGuerra) {
+        this.gritoDeGuerra = gritoDeGuerra;
+    }
+
+    public void setAnoDeFundacao(int anoDeFundacao) {
+        this.anoDeFundacao = anoDeFundacao;
+    }
+
+    public void setPontos(int pontos) {
+        this.pontos = pontos;
+    }
+
+    public void setAdvContador(int advContador) {
+        this.advContador = advContador;
+    }
+
+    public void registrarBlot() {
+        pontos += 5;
+    }
+
+    public void registrarPlif() {
+        pontos += 1;
+    }
+
+    public void aplicarAdvrungh() {
+        pontos -= 10;
+        advContador++;
+    }
+
+    @Override
+    public String toString() {
+        return "\n\nNome da equipe: " + nome
+                + "\nGrito de Guerra: " + gritoDeGuerra
+                + "\nAno de Fundação: " + anoDeFundacao
+                + "\nPontos: " + pontos;
+    }
+
+}
