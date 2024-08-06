@@ -1,0 +1,208 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Campeonato {
+
+    private List<String> listaEquipes;
+    private List<String> listaGanhadores;
+    private List<String[]> partidasNaoOcorridas;
+    private List<Integer> pontosEquipes;
+    private Scanner scanner;
+
+    public Campeonato(List<String> equipesCadastradas) {
+
+        this.listaEquipes = equipesCadastradas;
+        this.listaGanhadores = new ArrayList<>();
+        this.partidasNaoOcorridas = new ArrayList<>();
+        this.pontosEquipes = new ArrayList<>();
+        this.scanner = new Scanner(System.in);
+
+        for (int i = 0; i < listaEquipes.size(); i++) {
+            pontosEquipes.add(50);
+        }
+    }
+
+    private void embaralhar(List<String> lista) {
+
+        Random sorteio = new Random();
+
+        for (int i = lista.size() - 1; i > 0; i--) {
+
+            int j = sorteio.nextInt(i + 1);
+            String temp = lista.get(i);
+            lista.set(i, lista.get(j));
+            lista.set(j, temp);
+        }
+    }
+
+    public void sortearDuplas() {
+
+        List<String> vencedoresRodada = new ArrayList<>(listaEquipes);
+        int faseAtual = 1;
+
+        System.out.println("\n--- INÍCIO DO CAMPEONATO! ---");
+
+        while (vencedoresRodada.size() > 1) {
+
+            System.out.println("\nChave: " + faseAtual);
+
+            embaralhar(vencedoresRodada);
+
+            listaGanhadores.clear();
+            partidasNaoOcorridas.clear();
+
+            for (int i = 0; i < vencedoresRodada.size(); i += 2) {
+                if (i + 1 < vencedoresRodada.size()) {
+                    String equipe1 = vencedoresRodada.get(i);
+                    String equipe2 = vencedoresRodada.get(i + 1);
+                    partidasNaoOcorridas.add(new String[] { equipe1, equipe2 });
+                }
+            }
+
+            while (!partidasNaoOcorridas.isEmpty()) {
+                mostrarPartidasDisponiveis();
+                mostrarPontos();
+
+                System.out.println("\nEscolha uma partida para iniciar (ou aperte 0 para sair): ");
+                int escolha = scanner.nextInt() - 1;
+
+                if (escolha == -1) {
+                    break;
+                } else if (escolha >= 0 && escolha < partidasNaoOcorridas.size()) {
+                    String[] partidaEscolhida = partidasNaoOcorridas.remove(escolha);
+                    administrarPartida(partidaEscolhida);
+                } else {
+                    System.out.println("Escolha inválida!");
+                }
+            }
+
+            vencedoresRodada = new ArrayList<>(listaGanhadores);
+            faseAtual++;
+        }
+
+        if (!vencedoresRodada.isEmpty()) {
+            System.out.println("\nVencedor final: " + vencedoresRodada.get(0));
+            System.out.println("\nCAMPEONATO FINALIZADO!");
+        }
+
+        scanner.close();
+    }
+
+    private void mostrarPartidasDisponiveis() {
+
+        System.out.println("\nPartidas disponíveis:");
+
+        for (int i = 0; i < partidasNaoOcorridas.size(); i++) {
+            String[] partida = partidasNaoOcorridas.get(i);
+            System.out.println((i + 1) + ": " + partida[0] + " VS " + partida[1]);
+        }
+    }
+
+    private void mostrarPontos() {
+
+        System.out.println("\nPontuação atual das equipes:");
+
+        for (int i = 0; i < listaEquipes.size(); i++) {
+            System.out.println(listaEquipes.get(i) + ": " + pontosEquipes.get(i) + " pontos");
+        }
+    }
+
+    private void administrarPartida(String[] partida) {
+
+        String equipe1 = partida[0];
+        String equipe2 = partida[1];
+
+        System.out.println("\nIniciando partida: " + equipe1 + " VS " + equipe2);
+
+        int pontosEquipe1 = 50;
+        int pontosEquipe2 = 50;
+
+        boolean partidaEncerrada = false;
+
+        while (!partidaEncerrada) {
+            System.out.println("\n[Partida " + equipe1 + " VS " + equipe2 + "]");
+
+            System.out.println("\nPlacar: ");
+
+            System.out.println("\n" + equipe1 + ": " + pontosEquipe1);
+            System.out.println("\n" + equipe2 + ": " + pontosEquipe2);
+
+            System.out.println("Qual controle você deseja aplicar:\n");
+            System.out.println("1: Registrar um 'blot' para " + equipe1);
+            System.out.println("2: Registrar um 'blot' para " + equipe2);
+            System.out.println("3: Registrar um 'plif' para " + equipe1);
+            System.out.println("4: Registrar um 'plif' para " + equipe2);
+            System.out.println("5: Advrungh");
+            System.out.println("6: Encerrar administração");
+
+            int opcao = scanner.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    pontosEquipe1 += 5;
+                    break;
+                case 2:
+                    pontosEquipe2 += 5;
+                    break;
+                case 3:
+                    pontosEquipe1 += 1;
+                    break;
+                case 4:
+                    pontosEquipe2 += 1;
+                    break;
+                case 5:
+                    aplicarPenalidadeAdvrungh();
+                    break;
+                case 6:
+                    partidaEncerrada = true;
+                    break;
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        }
+
+        String vencedor = (pontosEquipe1 > pontosEquipe2) ? equipe1 : equipe2;
+        System.out.println("-----------------------------");
+        System.out.println("Ganhador da partida: " + vencedor);
+        System.out.println("-----------------------------");
+
+        listaGanhadores.add(vencedor);
+
+        int index1 = listaEquipes.indexOf(equipe1);
+        int index2 = listaEquipes.indexOf(equipe2);
+
+        pontosEquipes.set(index1, pontosEquipe1);
+        pontosEquipes.set(index2, pontosEquipe2);
+    }
+
+    private void aplicarPenalidadeAdvrungh() {
+
+        mostrarEquipes();
+
+        System.out.print("\nEscolha a equipe para a qual aplicar a penalidade: ");
+        int escolha = scanner.nextInt() - 1;
+
+        if (escolha >= 0 && escolha < listaEquipes.size()) {
+
+            String equipePenalizada = listaEquipes.get(escolha);
+            int indexEquipe = listaEquipes.indexOf(equipePenalizada);
+            int pontosAtuais = pontosEquipes.get(indexEquipe);
+            pontosEquipes.set(indexEquipe, pontosAtuais - 10);
+            
+            System.out.println("Equipe " + equipePenalizada + " recebeu penalidade 'advrungh' e perdeu 10 pontos.");
+        } else {
+            System.out.println("Escolha inválida!");
+        }
+    }
+
+    private void mostrarEquipes() {
+
+        System.out.println("\nEquipes disponíveis:");
+        
+        for (int i = 0; i < listaEquipes.size(); i++) {
+            System.out.println((i + 1) + ": " + listaEquipes.get(i));
+        }
+    }
+}
